@@ -67,8 +67,8 @@ document.querySelector('.button-save').addEventListener('click', function() {
 
   if (window.loadedData && window.loadedData.length > 0) {
       const payload = {
-          dbName: dbName,
-          campaign: campaign,
+          nombre_base_datos: dbName,
+          campana: campaign,
           date: date,
           clientes: window.loadedData
       };
@@ -82,14 +82,18 @@ document.querySelector('.button-save').addEventListener('click', function() {
         body: JSON.stringify(payload),
     })
     .then(response => {
+        // Si la respuesta no es "ok", se obtiene el texto y se lanza un error
         if (!response.ok) {
             return response.text().then(text => {
+                console.error('Respuesta del servidor (no OK): ', text); // Para depuración
                 throw new Error(`Error del servidor: ${text}`);
             });
         }
+        // Intentamos parsear la respuesta como JSON
         return response.json();
     })
     .then(data => {
+        // Verificamos si la respuesta contiene éxito
         if (data.success) {
             alert('Los datos han sido guardados correctamente en la base de datos');
         } else {
@@ -97,6 +101,7 @@ document.querySelector('.button-save').addEventListener('click', function() {
         }
     })
     .catch(error => {
+        // Si hubo un error en la solicitud, lo mostramos
         console.error('Error:', error);
         alert(`Hubo un error: ${error.message}`);
     });
