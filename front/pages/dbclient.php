@@ -18,7 +18,7 @@
       <nav class="flex-1 overflow-y-auto p-4">
         <ul class="space-y-2">
           <li>
-            <a href="/index.html">
+            <a href="/index.php">
               <button class="flex w-full items-center justify-between rounded-lg p-2">
                 <span>Plantilla de mensajes</span>
               </button>
@@ -35,7 +35,7 @@
             </button>
           </li>
           <li>
-            <a href="/front/pages/dbclient.html">
+            <a href="/front/pages/dbclient.php">
               <button class="flex w-full items-center justify-between rounded-lg p-2">
                 <span>Base de datos</span>
               </button>
