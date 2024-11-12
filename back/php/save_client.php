@@ -24,15 +24,15 @@ if ($conn->connect_error) {
 // Obtener los datos del cuerpo de la solicitud
 $data = json_decode(file_get_contents('php://input'), true);
 
-// Validar los datos recibidos
-if (empty($data['nombre_base_datos']) || empty($data['campana']) || empty($data['date']) || empty($data['clientes'])) {
+// Validar datos
+if (empty($data['dbName']) || empty($data['campaign']) || empty($data['date']) || empty($data['clientes'])) {
     echo json_encode(['success' => false, 'message' => 'Datos incompletos']);
     exit;
 }
 
-// Variables de los datos enviados
-$dbName = $data['nombre_base_datos'];
-$campaign = $data['campana'];
+// Variables adicionales
+$dbName = $data['dbName'];
+$campaign = $data['campaign'];
 $date = $data['date'];
 
 // Preparar la consulta de inserción
@@ -41,14 +41,14 @@ $stmt->bind_param("sssssss", $nombre_cliente, $apellido_cliente, $numero_telefon
 
 // Iterar sobre los clientes e insertar
 foreach ($data['clientes'] as $cliente) {
-    // Separa el nombre completo en nombre y apellido
+    // Dividir el nombre completo en nombre y apellido
     $names = explode(' ', $cliente['fullName']);
-    $nombre_cliente = $names[0]; // El primer nombre
-    $apellido_cliente = isset($names[1]) ? $names[1] : ''; // El segundo nombre (si existe)
-    $numero_telefono = $cliente['phone'];
-    $asesor_ventas = $cliente['advisor'];
+    $nombre_cliente = $names[0]; // Nombre
+    $apellido_cliente = isset($names[1]) ? $names[1] : ''; // Apellido
+    $numero_telefono = $cliente['phone']; // Teléfono
+    $asesor_ventas = $cliente['advisor']; // Asesor de ventas
 
-    // Ejecutar la consulta de inserción
+    // Ejecutar la consulta para insertar el cliente
     if (!$stmt->execute()) {
         echo json_encode(['success' => false, 'message' => 'Error al insertar cliente: ' . $stmt->error]);
         exit;
@@ -59,6 +59,7 @@ foreach ($data['clientes'] as $cliente) {
 $stmt->close();
 $conn->close();
 
-// Responder con un mensaje de éxito
+// Devolver la respuesta de éxito como JSON
 echo json_encode(['success' => true, 'message' => 'Datos guardados correctamente']);
+exit;
 ?>
