@@ -25,14 +25,14 @@ if ($conn->connect_error) {
 $data = json_decode(file_get_contents('php://input'), true);
 
 // Validar datos
-if (empty($data['dbName']) || empty($data['campaign']) || empty($data['date']) || empty($data['clientes'])) {
+if (empty($data['nombre_base_datos']) || empty($data['campana']) || empty($data['date']) || empty($data['clientes'])) {
     echo json_encode(['success' => false, 'message' => 'Datos incompletos']);
     exit;
 }
 
 // Variables adicionales
-$dbName = $data['dbName'];
-$campaign = $data['campaign'];
+$dbName = $data['nombre_base_datos'];
+$campaign = $data['campana'];
 $date = $data['date'];
 
 // Preparar la consulta de inserción
