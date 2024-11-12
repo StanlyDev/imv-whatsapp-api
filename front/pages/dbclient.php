@@ -68,7 +68,7 @@
             <div class="relative">
               <input type="text" placeholder="Buscar base de datos..." />
             </div>
-            <a href="/front/pages/add_ddclient.html">
+            <a href="/front/pages/add_ddclient.php">
               <button class="button btn" style="background-color: #4CAF50; color: white;">
                 Nueva Base de Datos
               </button>

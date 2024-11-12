@@ -17,24 +17,32 @@ if ($conn->connect_error) {
 $data = json_decode(file_get_contents("php://input"), true);
 
 // Verificar si los datos fueron recibidos correctamente
-if (is_array($data) && count($data) > 0) {
-    $stmt = $conn->prepare("INSERT INTO Clientes (nombre_cliente, apellido_cliente, numero_telefono, asesor_ventas) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssss", $nombre_cliente, $apellido_cliente, $numero_telefono, $asesor_ventas);
+if (isset($data['dbName'], $data['campaign'], $data['date'], $data['clientes']) && is_array($data['clientes'])) {
+    $dbName = $data['dbName'];
+    $campaign = $data['campaign'];
+    $date = $data['date'];
+    
+    // Preparar la consulta para insertar los datos en la tabla
+    $stmt = $conn->prepare("
+        INSERT INTO Clientes 
+        (nombre_cliente, apellido_cliente, numero_telefono, asesor_ventas, nombre_base_datos, campaña, fecha_ingreso) 
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ");
+    $stmt->bind_param("sssssss", $nombre_cliente, $apellido_cliente, $numero_telefono, $asesor_ventas, $dbName, $campaign, $date);
 
-    // Iterar sobre los datos y realizar las inserciones
-    foreach ($data as $row) {
+    // Iterar sobre los datos de clientes y realizar las inserciones
+    foreach ($data['clientes'] as $row) {
         // Separar el nombre completo en nombre y apellido
-        $names = explode(' ', $row['fullName']);
-        $nombre_cliente = $names[0];  // Suponemos que el primer nombre es el nombre
-        $apellido_cliente = isset($names[1]) ? $names[1] : '';  // El segundo nombre es el apellido
+        $names = explode(' ', $row['fullName'], 2);
+        $nombre_cliente = $names[0];
+        $apellido_cliente = isset($names[1]) ? $names[1] : '';
 
         $numero_telefono = $row['phone'];
         $asesor_ventas = $row['advisor'];
 
         // Ejecutar la inserción en la base de datos
         if (!$stmt->execute()) {
-            // Si hay un error, responder con un mensaje de error
-            echo json_encode(['success' => false, 'message' => 'Error al guardar datos']);
+            echo json_encode(['success' => false, 'message' => 'Error al guardar datos en cliente: ' . $stmt->error]);
             $conn->close();
             exit;
         }
@@ -48,6 +56,6 @@ if (is_array($data) && count($data) > 0) {
     echo json_encode(['success' => true]);
 } else {
     // Si no se reciben datos válidos
-    echo json_encode(['success' => false, 'message' => 'No se recibieron datos']);
+    echo json_encode(['success' => false, 'message' => 'Datos incompletos o inválidos']);
 }
 ?>
