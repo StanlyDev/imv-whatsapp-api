@@ -74,7 +74,7 @@ document.querySelector('.button-save').addEventListener('click', function() {
       };
 
       // Enviar los datos al servidor usando AJAX
-      fetch('/path/to/your_php_script.php', {
+      fetch('/back/php/save_client.php', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
