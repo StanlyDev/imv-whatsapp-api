@@ -1,61 +1,61 @@
 <?php
-// Configurar la conexión a la base de datos
+// Habilitar errores para depuración
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Configurar la respuesta como JSON
+header('Content-Type: application/json');
+
+// Configuración de la base de datos
 $servername = "localhost";
 $username = "bventura";
 $password = "Stanlyv_00363";
 $dbname = "ClientesDB";
 
-// Crear conexión
+// Crear la conexión
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Verificar la conexión
+// Verificar conexión
 if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
+    echo json_encode(['success' => false, 'message' => 'Error de conexión: ' . $conn->connect_error]);
+    exit;
 }
 
-// Recibir los datos enviados desde JavaScript (en formato JSON)
-$data = json_decode(file_get_contents("php://input"), true);
+// Obtener los datos del cuerpo de la solicitud
+$data = json_decode(file_get_contents('php://input'), true);
 
-// Verificar si los datos fueron recibidos correctamente
-if (isset($data['dbName'], $data['campaign'], $data['date'], $data['clientes']) && is_array($data['clientes'])) {
-    $dbName = $data['dbName'];
-    $campaign = $data['campaign'];
-    $date = $data['date'];
-    
-    // Preparar la consulta para insertar los datos en la tabla
-    $stmt = $conn->prepare("
-        INSERT INTO Clientes 
-        (nombre_cliente, apellido_cliente, numero_telefono, asesor_ventas, nombre_base_datos, campaña, fecha_ingreso) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    ");
-    $stmt->bind_param("sssssss", $nombre_cliente, $apellido_cliente, $numero_telefono, $asesor_ventas, $dbName, $campaign, $date);
+// Validar datos
+if (empty($data['dbName']) || empty($data['campaign']) || empty($data['date']) || empty($data['clientes'])) {
+    echo json_encode(['success' => false, 'message' => 'Datos incompletos']);
+    exit;
+}
 
-    // Iterar sobre los datos de clientes y realizar las inserciones
-    foreach ($data['clientes'] as $row) {
-        // Separar el nombre completo en nombre y apellido
-        $names = explode(' ', $row['fullName'], 2);
-        $nombre_cliente = $names[0];
-        $apellido_cliente = isset($names[1]) ? $names[1] : '';
+// Variables adicionales
+$dbName = $data['dbName'];
+$campaign = $data['campaign'];
+$date = $data['date'];
 
-        $numero_telefono = $row['phone'];
-        $asesor_ventas = $row['advisor'];
+// Preparar la consulta de inserción
+$stmt = $conn->prepare("INSERT INTO Clientes (nombre_cliente, apellido_cliente, numero_telefono, asesor_ventas, db_name, campaign, fecha_ingreso) VALUES (?, ?, ?, ?, ?, ?, ?)");
+$stmt->bind_param("sssssss", $nombre_cliente, $apellido_cliente, $numero_telefono, $asesor_ventas, $dbName, $campaign, $date);
 
-        // Ejecutar la inserción en la base de datos
-        if (!$stmt->execute()) {
-            echo json_encode(['success' => false, 'message' => 'Error al guardar datos en cliente: ' . $stmt->error]);
-            $conn->close();
-            exit;
-        }
+// Iterar sobre los clientes e insertar
+foreach ($data['clientes'] as $cliente) {
+    $names = explode(' ', $cliente['fullName']);
+    $nombre_cliente = $names[0];
+    $apellido_cliente = isset($names[1]) ? $names[1] : '';
+    $numero_telefono = $cliente['phone'];
+    $asesor_ventas = $cliente['advisor'];
+
+    if (!$stmt->execute()) {
+        echo json_encode(['success' => false, 'message' => 'Error al insertar cliente: ' . $stmt->error]);
+        exit;
     }
-
-    // Cerrar la declaración y la conexión
-    $stmt->close();
-    $conn->close();
-
-    // Responder con éxito
-    echo json_encode(['success' => true]);
-} else {
-    // Si no se reciben datos válidos
-    echo json_encode(['success' => false, 'message' => 'Datos incompletos o inválidos']);
 }
+
+// Cerrar conexión
+$stmt->close();
+$conn->close();
+
+echo json_encode(['success' => true, 'message' => 'Datos guardados correctamente']);
 ?>
