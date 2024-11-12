@@ -1,0 +1,157 @@
+@font-face {
+    font-family: 'MiFuente';
+    src: url('/front/font/Mazda-Type-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'MiFuente';
+    src: url('/front/font/Mazda-Type-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'MiFuente';
+    src: url('/front/font/Mazda-Type-Italic.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+}
+
+html{
+    color: #d1d5db !important;
+}
+
+h1 {
+    font-weight: bold;
+}
+
+em {
+    font-style: italic;
+}
+
+p {
+    font-weight: normal;
+}
+
+body {
+    background-color: #231f20;
+    font-family: 'MiFuente', sans-serif;
+  }
+
+  aside {
+    background-color: #312f30;
+  }
+
+  header {
+    background-color: #312f30;
+  }
+
+  ul li button {
+    color: #d1d5db;
+  }
+
+  ul li button:hover {
+    background-color: #3f3b3c;
+    color: #ffffff;
+  }
+
+  .main-heading {
+    color: #ffffff;
+  }
+
+  .main-content p {
+    color: #a1a1a1;
+  }
+
+  button:hover {
+    background-color: #3f3b3c;
+    color: #ffffff;
+  }
+
+  .btn:hover {
+    background-color: #3f3b3c;
+    color: #ffffff;
+    cursor: pointer;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: auto;
+    background: #312f30;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+
+  h1 {
+    color: #ffffff;
+    text-align: center;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #ffffff;
+  }
+
+  input[type="text"],
+  input[type="date"],
+  input[type="file"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background-color: #231f20;
+    color: #ffffff;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #312f30;
+  }
+
+  table, th, td {
+    border: 1px solid #444;
+  }
+
+  th, td {
+    padding: 10px;
+    text-align: left;
+    color: #ffffff;
+  }
+
+  th {
+    background-color: #231f20;
+  }
+
+  .button {
+    padding: 10px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding-left: 1rem;
+  }
+  
+  .button-save {
+    background-color: #4CAF50;
+    color: white;
+  }
+
+  .button-delete {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .button:hover {
+    opacity: 0.9;
+  }
