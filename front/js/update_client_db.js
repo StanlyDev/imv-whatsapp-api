@@ -75,24 +75,31 @@ document.querySelector('.button-save').addEventListener('click', function() {
 
       // Enviar los datos al servidor usando AJAX
       fetch('/back/php/save_client.php', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(payload),
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.success) {
-              alert('Los datos han sido guardados correctamente en la base de datos');
-          } else {
-              alert('Hubo un error al guardar los datos: ' + data.message);
-          }
-      })
-      .catch(error => {
-          console.error('Error:', error);
-          alert('Hubo un error al guardar los datos');
-      });
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`Error del servidor: ${text}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            alert('Los datos han sido guardados correctamente en la base de datos');
+        } else {
+            alert('Hubo un error al guardar los datos: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert(`Hubo un error: ${error.message}`);
+    });
   } else {
       alert('No hay datos para guardar');
   }
