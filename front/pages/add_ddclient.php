@@ -5,9 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WhatsApp Imvesa</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <script src="/front/js/menu.js"></script>
   <script defer src="/front/js/loadCSV.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="/back/js/form-submit.js"></script>
   <link rel="stylesheet" href="/front/css/add_dbclient.css">
 </head>
 <body class="flex h-screen">
@@ -67,7 +69,7 @@
         <div class="container">
           <h1>Base de Datos de Clientes</h1>
           <!-- Formulario -->
-          <form action="/back/php/save_client_data.php" method="POST" enctype="multipart/form-data">
+          <form id="client-form" method="POST" enctype="multipart/form-data">
             <div class="form-group">
               <label for="dbName">Nombre de Base de Datos</label>
               <input type="text" id="dbName" name="nombre_base_datos" placeholder="Ingrese el nombre de la base de datos" required class="w-full p-2 border border-gray-300 rounded">
