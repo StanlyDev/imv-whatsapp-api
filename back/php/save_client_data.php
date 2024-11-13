@@ -1,48 +1,62 @@
 <?php
-$servername = "localhost";
-$username = "bventura";  // Cambia a tu usuario
-$password = "Stanlyv_00363";      // Cambia a tu contraseña
-$dbname = "ClientesDB";
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
-// Crear conexión
-$conn = new mysqli($servername, $username, $password, $dbname);
+// Configuración de la base de datos
+$host = '192.168.124.133'; // o la IP de tu servidor MySQL
+$db = 'ClientesDB';
+$user = 'bventura'; // Cambia esto con tu usuario de MySQL
+$pass = 'Stanlyv_00363'; // Cambia esto con tu contraseña de MySQL
 
-// Verificar conexión
+// Conexión a la base de datos con MySQLi
+$conn = new mysqli($host, $user, $pass, $db);
+
+// Verificar si hay errores de conexión
 if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
-// Obtener datos desde el POST (luego de AJAX)
-$nombreBaseDatos = $_POST['nombre_base_datos'];
-$campana = $_POST['campana'];
-$fechaIngreso = $_POST['fecha_ingreso'];
-$clientes = json_decode($_POST['clientes']);  // Lista de clientes desde el formulario
+// Verificar si los datos fueron enviados
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Obtener los datos del formulario
+    $nombre_base_datos = $_POST['nombre_base_datos'] ?? '';
+    $campana = $_POST['campana'] ?? '';
+    $fecha_ingreso = $_POST['fecha_ingreso'] ?? '';
+    $clientes = json_decode($_POST['clientes'], true);
 
-// Insertar la información de la base de datos y campaña
-$sql = "INSERT INTO Clientes (nombre_base_datos, campana, fecha_ingreso) VALUES ('$nombreBaseDatos', '$campana', '$fechaIngreso')";
+    // Verificar si los datos necesarios están presentes
+    if (empty($nombre_base_datos) || empty($campana) || empty($fecha_ingreso) || empty($clientes)) {
+        echo "Por favor, complete todos los campos y asegúrese de que haya datos válidos.";
+        exit;
+    }
 
-if ($conn->query($sql) === TRUE) {
-    $last_id = $conn->insert_id;  // Obtener el ID de la última base de datos insertada
-    
-    // Ahora insertar cada cliente en la tabla Clientes
+    // Insertar los datos en la base de datos
     foreach ($clientes as $cliente) {
-        $nombreCliente = $cliente->nombre_cliente;
-        $apellidoCliente = $cliente->apellido_cliente;
-        $numeroTelefono = $cliente->numero_telefono;
-        $asesorVentas = $cliente->asesor_ventas;
+        $nombre_cliente = $conn->real_escape_string($cliente['nombre_cliente']);
+        $apellido_cliente = $conn->real_escape_string($cliente['apellido_cliente']);
+        $numero_telefono = $conn->real_escape_string($cliente['numero_telefono']);
+        $asesor_ventas = $conn->real_escape_string($cliente['asesor_ventas']);
 
-        $sqlCliente = "INSERT INTO Clientes (nombre_cliente, apellido_cliente, numero_telefono, asesor_ventas, nombre_base_datos, campana, fecha_ingreso) 
-                       VALUES ('$nombreCliente', '$apellidoCliente', '$numeroTelefono', '$asesorVentas', '$nombreBaseDatos', '$campana', '$fechaIngreso')";
-        
-        if ($conn->query($sqlCliente) !== TRUE) {
-            echo "Error: " . $sqlCliente . "<br>" . $conn->error;
+        // Preparar la consulta SQL para insertar los datos del cliente
+        $sql = "INSERT INTO Clientes (nombre_cliente, apellido_cliente, numero_telefono, asesor_ventas, nombre_base_datos, campana, fecha_ingreso)
+                VALUES ('$nombre_cliente', '$apellido_cliente', '$numero_telefono', '$asesor_ventas', '$nombre_base_datos', '$campana', '$fecha_ingreso')";
+
+        // Mostrar la consulta SQL para depuración (puedes eliminar esta línea una vez que todo funcione)
+        echo $sql . "<br>";  
+
+        if (!$conn->query($sql)) {
+            // Si hay un error en la inserción, muestra el error
+            echo "Error al insertar cliente: " . $conn->error;
+            exit;
         }
     }
-    
-    echo "Datos guardados correctamente";
+
+    // Si todo fue exitoso
+    echo "Los datos se han guardado correctamente.";
 } else {
-    echo "Error: " . $sql . "<br>" . $conn->error;
+    echo "Método no permitido.";
 }
 
+// Cerrar la conexión a la base de datos
 $conn->close();
 ?>

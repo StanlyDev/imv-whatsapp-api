@@ -4,20 +4,27 @@ document.querySelector(".button-save").addEventListener("click", function() {
     const campana = document.getElementById("campaign").value;
     const fechaIngreso = document.getElementById("date").value;
 
+    // Verificar si los campos del formulario están completos
+    if (!nombreBaseDatos || !campana || !fechaIngreso) {
+        alert("Por favor, complete todos los campos del formulario.");
+        return;
+    }
+
     // Obtener los datos de los clientes en la tabla
     let clientes = [];
     const rows = document.querySelectorAll("table tbody tr");
 
+    console.log("Filas de la tabla:", rows);  // Depuración: Verificar las filas de la tabla
+
     rows.forEach(row => {
         const cells = row.querySelectorAll("td");
-        
-        // Verificar que la fila tenga al menos 4 celdas
-        if (cells.length >= 4) {  
-            // Obtener los valores de las celdas
-            const nombre_cliente = cells[1] ? cells[1].textContent.trim() : '';
-            const apellido_cliente = cells[2] ? cells[2].textContent.trim() : '';
-            const numero_telefono = cells[3] ? cells[3].textContent.trim() : '';
-            const asesor_ventas = cells[4] ? cells[4].textContent.trim() : '';
+
+        // Verificar si la fila tiene al menos 4 celdas
+        if (cells.length >= 4) {
+            const nombre_cliente = cells[0] ? cells[0].textContent.trim() : '';
+            const apellido_cliente = cells[1] ? cells[1].textContent.trim() : '';
+            const numero_telefono = cells[2] ? cells[2].textContent.trim() : '';
+            const asesor_ventas = cells[3] ? cells[3].textContent.trim() : '';
 
             // Asegurarse de que no haya valores vacíos antes de agregar al array
             if (nombre_cliente && apellido_cliente && numero_telefono && asesor_ventas) {
@@ -31,23 +38,30 @@ document.querySelector(".button-save").addEventListener("click", function() {
         }
     });
 
-    // Verificar si los campos son válidos
-    if (!nombreBaseDatos || !campana || !fechaIngreso || clientes.length === 0) {
-        alert("Por favor, complete todos los campos y asegúrese de que haya datos válidos en la tabla.");
+    console.log("Clientes extraídos:", clientes);  // Depuración: Verificar los datos extraídos
+
+    // Verificar si se han capturado clientes
+    if (clientes.length === 0) {
+        alert("No se han encontrado datos válidos en la tabla.");
         return;
     }
 
     // Preparar los datos para enviar
-    const formData = new FormData();
-    formData.append("nombre_base_datos", nombreBaseDatos);
-    formData.append("campana", campana);
-    formData.append("fecha_ingreso", fechaIngreso);
-    formData.append("clientes", JSON.stringify(clientes));
+    // Crear un objeto con los datos
+    const formData = {
+        nombre_base_datos: nombreBaseDatos,
+        campana: campana,
+        fecha_ingreso: fechaIngreso,
+        clientes: JSON.stringify(clientes)
+    };
 
-    // Enviar los datos al servidor con AJAX
-    fetch("save_client_data.php", {
+    // Enviar los datos como JSON
+    fetch("/back/php/save_client_data.php", {
         method: "POST",
-        body: formData
+        headers: {
+            "Content-Type": "application/json"  // Aseguramos que el contenido es JSON
+        },
+        body: JSON.stringify(formData)  // Convertimos los datos en JSON
     })
     .then(response => response.text())
     .then(data => {
