@@ -1,62 +1,84 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+// Conexión a la base de datos MySQL
+$servername = "localhost";  // o la dirección IP de tu servidor MySQL
+$username = "bventura";     // tu nombre de usuario MySQL
+$password = "your_password"; // tu contraseña MySQL
+$dbname = "ClientesDB";      // nombre de la base de datos
 
-// Configuración de la base de datos
-$host = '192.168.124.133'; // o la IP de tu servidor MySQL
-$db = 'ClientesDB';
-$user = 'bventura'; // Cambia esto con tu usuario de MySQL
-$pass = 'Stanlyv_00363'; // Cambia esto con tu contraseña de MySQL
+// Crear la conexión
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-// Conexión a la base de datos con MySQLi
-$conn = new mysqli($host, $user, $pass, $db);
-
-// Verificar si hay errores de conexión
+// Verificar la conexión
 if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
-// Verificar si los datos fueron enviados
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Obtener los datos del formulario
-    $nombre_base_datos = $_POST['nombre_base_datos'] ?? '';
-    $campana = $_POST['campana'] ?? '';
-    $fecha_ingreso = $_POST['fecha_ingreso'] ?? '';
-    $clientes = json_decode($_POST['clientes'], true);
+// Recibir los datos del formulario
+$nombre_base_datos = $_POST['nombre_base_datos'];
+$campana = $_POST['campana'];
+$fecha_ingreso = $_POST['fecha_ingreso'];
 
-    // Verificar si los datos necesarios están presentes
-    if (empty($nombre_base_datos) || empty($campana) || empty($fecha_ingreso) || empty($clientes)) {
-        echo "Por favor, complete todos los campos y asegúrese de que haya datos válidos.";
-        exit;
-    }
+// Preparar la consulta para insertar los datos del formulario
+$sql = "INSERT INTO Clientes (nombre_base_datos, campana, fecha_ingreso) VALUES (?, ?, ?)";
 
-    // Insertar los datos en la base de datos
-    foreach ($clientes as $cliente) {
-        $nombre_cliente = $conn->real_escape_string($cliente['nombre_cliente']);
-        $apellido_cliente = $conn->real_escape_string($cliente['apellido_cliente']);
-        $numero_telefono = $conn->real_escape_string($cliente['numero_telefono']);
-        $asesor_ventas = $conn->real_escape_string($cliente['asesor_ventas']);
+// Preparar la declaración
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("sss", $nombre_base_datos, $campana, $fecha_ingreso);
 
-        // Preparar la consulta SQL para insertar los datos del cliente
-        $sql = "INSERT INTO Clientes (nombre_cliente, apellido_cliente, numero_telefono, asesor_ventas, nombre_base_datos, campana, fecha_ingreso)
-                VALUES ('$nombre_cliente', '$apellido_cliente', '$numero_telefono', '$asesor_ventas', '$nombre_base_datos', '$campana', '$fecha_ingreso')";
+// Ejecutar la declaración
+if ($stmt->execute()) {
+    echo "Datos guardados exitosamente";
+} else {
+    echo "Error al guardar los datos: " . $stmt->error;
+}
 
-        // Mostrar la consulta SQL para depuración (puedes eliminar esta línea una vez que todo funcione)
-        echo $sql . "<br>";  
+// Si se ha cargado un archivo Excel
+if (isset($_FILES['file-upload']) && $_FILES['file-upload']['error'] == 0) {
+    $file = $_FILES['file-upload']['tmp_name'];
+    $handle = fopen($file, "r");
 
-        if (!$conn->query($sql)) {
-            // Si hay un error en la inserción, muestra el error
-            echo "Error al insertar cliente: " . $conn->error;
-            exit;
+    // Leer el archivo CSV línea por línea (dependiendo del tipo de archivo cargado)
+    // Usamos una librería para manejar el archivo Excel si es necesario
+    require_once 'PHPExcel/IOFactory.php'; // Asegúrate de tener la librería PHPExcel instalada.
+
+    // Cargar el archivo Excel
+    $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file);
+    $worksheet = $spreadsheet->getActiveSheet();
+    
+    foreach ($worksheet->getRowIterator() as $row) {
+        $cellIterator = $row->getCellIterator();
+        $cellIterator->setIterateOnlyExistingCells(false);
+
+        $rowData = [];
+        foreach ($cellIterator as $cell) {
+            $rowData[] = $cell->getValue();
+        }
+
+        // Guardar los datos de cada fila en la base de datos
+        if (count($rowData) >= 4) {
+            $nombre_cliente = $rowData[0];
+            $apellido_cliente = $rowData[1];
+            $numero_telefono = $rowData[2];
+            $asesor_ventas = $rowData[3];
+
+            // Insertar en la base de datos
+            $sql = "INSERT INTO Clientes (nombre_cliente, apellido_cliente, numero_telefono, asesor_ventas, nombre_base_datos, campana, fecha_ingreso) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+            // Preparar la declaración
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("sssssss", $nombre_cliente, $apellido_cliente, $numero_telefono, $asesor_ventas, $nombre_base_datos, $campana, $fecha_ingreso);
+            $stmt->execute();
         }
     }
 
-    // Si todo fue exitoso
-    echo "Los datos se han guardado correctamente.";
+    fclose($handle);
+    echo "Datos CSV/Excel cargados exitosamente";
 } else {
-    echo "Método no permitido.";
+    echo "No se cargó ningún archivo";
 }
 
-// Cerrar la conexión a la base de datos
+// Cerrar la conexión
+$stmt->close();
 $conn->close();
 ?>

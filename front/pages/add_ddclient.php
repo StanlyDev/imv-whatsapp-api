@@ -6,7 +6,6 @@
   <title>WhatsApp Imvesa</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script src="/front/js/menu.js"></script>
-  <script defer src="/back/js/update_client_db.js"></script>
   <script defer src="/front/js/loadCSV.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <link rel="stylesheet" href="/front/css/add_dbclient.css">
@@ -68,45 +67,44 @@
         <div class="container">
           <h1>Base de Datos de Clientes</h1>
           <!-- Formulario -->
-          <div>
+          <form action="/back/php/save_client_data.php" method="POST" enctype="multipart/form-data">
             <div class="form-group">
               <label for="dbName">Nombre de Base de Datos</label>
-              <input type="text" id="dbName" placeholder="Ingrese el nombre de la base de datos">
+              <input type="text" id="dbName" name="nombre_base_datos" placeholder="Ingrese el nombre de la base de datos" required class="w-full p-2 border border-gray-300 rounded">
             </div>
             <div class="form-group">
               <label for="campaign">Campaña</label>
-              <input type="text" id="campaign" placeholder="Ingrese el nombre de la campaña">
+              <input type="text" id="campaign" name="campana" placeholder="Ingrese el nombre de la campaña" required class="w-full p-2 border border-gray-300 rounded">
             </div>
             <div class="form-group">
               <label for="date">Fecha</label>
-              <input type="date" id="date">
+              <input type="date" id="date" name="fecha_ingreso" required class="w-full p-2 border border-gray-300 rounded">
             </div>
             <div class="form-group">
               <label for="file-upload">Cargar archivo Excel</label>
-              <input type="file" id="file-upload" accept=".xlsx, .xls">
+              <input type="file" id="file-upload" name="file-upload" accept=".xlsx, .xls" required class="w-full p-2 border border-gray-300 rounded">
             </div>
-          </div>
+            <div class="form-group mt-4">
+              <button type="submit" class="button button-save bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Guardar</button>
+              <button type="reset" class="button button-delete bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Eliminar</button>
+            </div>
+          </form>
           <!-- Tabla de clientes -->
-          <table>
+          <table class="w-full mt-6 border-collapse">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Nombre del Cliente</th>
-                <th>Número de Teléfono</th>
-                <th>Asesor de Ventas</th>
+                <th class="border px-4 py-2">ID</th>
+                <th class="border px-4 py-2">Nombre del Cliente</th>
+                <th class="border px-4 py-2">Número de Teléfono</th>
+                <th class="border px-4 py-2">Asesor de Ventas</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td colspan="4" style="text-align: center;">No hay datos disponibles</td>
+                <td colspan="4" class="border px-4 py-2 text-center">No hay datos disponibles</td>
               </tr>
             </tbody>
           </table>
-          <!-- Botones de acción -->
-          <div style="margin-top: 20px;">
-            <button class="button button-save">Guardar</button>
-            <button class="button button-delete">Eliminar</button>
-          </div>
         </div>
       </div>
     </main>

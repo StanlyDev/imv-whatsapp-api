@@ -22,11 +22,15 @@ function processCSV(content) {
     // Separar el contenido por líneas
     const lines = content.split('\n');
     
+    // Intentamos detectar el delimitador en base a las primeras líneas del archivo
+    const delimiter = detectDelimiter(lines[0]);
+    
     // Saltar la primera línea (encabezado) y procesar el resto
     lines.slice(1).forEach((line) => {
         if (line.trim() === '') return; // Ignorar líneas vacías
         
-        const data = line.split(';');
+        // Dividir la línea usando el delimitador detectado
+        const data = line.split(delimiter);
         
         // Verificar que la línea tenga 4 columnas
         if (data.length === 4) {
@@ -53,6 +57,19 @@ function processCSV(content) {
         noDataCell.textContent = 'No hay datos disponibles';
         noDataRow.appendChild(noDataCell);
         tbody.appendChild(noDataRow);
+    }
+}
+
+// Función para detectar el delimitador más probable (coma o punto y coma)
+function detectDelimiter(line) {
+    const commaCount = (line.match(/,/g) || []).length;
+    const semicolonCount = (line.match(/;/g) || []).length;
+    
+    // Si hay más comas que puntos y comas, asumimos que es coma
+    if (commaCount > semicolonCount) {
+        return ',';
+    } else {
+        return ';';
     }
 }
 
