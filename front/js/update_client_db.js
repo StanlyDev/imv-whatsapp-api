@@ -12,8 +12,8 @@ document.getElementById('file-upload').addEventListener('change', function(event
             // Extraemos las columnas (sin encabezados) y generamos los datos
             const jsonData = rows.slice(1).map((row, index) => ({
                 fullName: `${row[0]} ${row[1]}`.trim(),
-                phone: row[2].trim(),
-                advisor: row[3].trim()
+                phone: row[2]?.trim() || '', // Validación para prevenir undefined
+                advisor: row[3]?.trim() || '' // Validación para prevenir undefined
             }));
 
             // Insertamos los datos en la tabla
@@ -70,13 +70,6 @@ document.querySelector('.button-save').addEventListener('click', function() {
         return;
     }
 
-    // Validar que todos los clientes tengan datos completos
-    const isValid = window.loadedData.every(cliente => cliente.fullName && cliente.phone && cliente.advisor);
-    if (!isValid) {
-        alert('Algunos registros tienen datos incompletos o incorrectos.');
-        return;
-    }
-
     const payload = {
         nombre_base_datos: dbName,
         campana: campaign,
@@ -84,7 +77,6 @@ document.querySelector('.button-save').addEventListener('click', function() {
         clientes: window.loadedData
     };
 
-    // Enviar los datos al servidor usando AJAX
     fetch('/back/php/save_client.php', {
         method: 'POST',
         headers: {
@@ -94,13 +86,10 @@ document.querySelector('.button-save').addEventListener('click', function() {
     })
     .then(response => {
         if (!response.ok) {
-            // Si el servidor responde con un error (pero no 200), lanzamos el texto del error.
             return response.text().then(text => {
                 throw new Error(`Error del servidor: ${text}`);
             });
         }
-        
-        // Intentamos convertir la respuesta a JSON
         return response.json();
     })
     .then(data => {
@@ -114,17 +103,13 @@ document.querySelector('.button-save').addEventListener('click', function() {
         console.error('Error:', error);
         alert(`Hubo un error: ${error.message}`);
     });
+});
 
 // Evento para limpiar la tabla y resetear el input
 document.querySelector('.button-delete').addEventListener('click', function() {
-    // Limpiar la tabla
     const tbody = document.querySelector('table tbody');
     tbody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No hay datos disponibles</td></tr>';
-
-    // Resetear el input de archivo
     const fileInput = document.getElementById('file-upload');
     fileInput.value = ''; // Reseteamos el input
-
-    // Limpiar los datos cargados
     window.loadedData = [];
 });
