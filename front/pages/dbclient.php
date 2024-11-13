@@ -85,39 +85,41 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Clientes Potenciales 2023</td>
-                <td>Verano 2023</td>
-                <td>2023-06-01</td>
-                <td>1,500</td>
-                <td class="text-right">
-                  <button class="icon">👁️</button>
-                  <button class="icon">✏️</button>
-                  <button class="icon">🗑️</button>
-                </td>
-              </tr>
-              <tr>
-                <td>Clientes Actuales</td>
-                <td>Fidelización</td>
-                <td>2023-07-15</td>
-                <td>3,000</td>
-                <td class="text-right">
-                  <button class="icon">👁️</button>
-                  <button class="icon">✏️</button>
-                  <button class="icon">🗑️</button>
-                </td>
-              </tr>
-              <tr>
-                <td>Leads Facebook</td>
-                <td>Redes Sociales</td>
-                <td>2023-08-01</td>
-                <td>500</td>
-                <td class="text-right">
-                  <button class="icon">👁️</button>
-                  <button class="icon">✏️</button>
-                  <button class="icon">🗑️</button>
-                </td>
-              </tr>
+              <?php
+              // Mostrar las tablas obtenidas desde la base de datos
+              if (empty($tablas)) {
+                  echo "<tr><td colspan='5'>No se encontraron bases de datos.</td></tr>";
+              } else {
+                  foreach ($tablas as $tabla) {
+                      // Verificar si la tabla tiene registros
+                      $conn = new mysqli($host, $user, $password, $dbname);
+                      $query = "SELECT COUNT(*) as count FROM `$tabla`";
+                      $countResult = $conn->query($query);
+                      if ($countResult) {
+                          $countRow = $countResult->fetch_assoc();
+                          $numRegistros = $countRow['count'];
+                      } else {
+                          $numRegistros = 0;
+                      }
+
+                      // Mostrar la tabla
+                      echo "<tr>
+                            <td>{$tabla}</td>
+                            <td>Desconocida</td> <!-- Aquí puedes poner la lógica para obtener la campaña -->
+                            <td>Desconocida</td> <!-- Aquí puedes poner la lógica para obtener la fecha de creación -->
+                            <td>{$numRegistros}</td>
+                            <td class='text-right'>
+                              <button class='icon'>👁️</button>
+                              <button class='icon'>✏️</button>
+                              <button class='icon'>🗑️</button>
+                            </td>
+                          </tr>";
+
+                      // Cerrar la conexión
+                      $conn->close();
+                  }
+              }
+              ?>
             </tbody>
           </table>
         </div>

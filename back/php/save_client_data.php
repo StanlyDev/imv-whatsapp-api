@@ -31,8 +31,36 @@ if (empty($clientes)) {
     die("No hay datos para guardar.");
 }
 
+// Crear una nueva tabla con el nombre proporcionado
+$table_name = $conn->real_escape_string($nombre_base_datos);  // Evitar inyección SQL
+
+// Consultar para ver si la tabla ya existe
+$query = "SHOW TABLES LIKE '$table_name'";
+$result = $conn->query($query);
+
+if ($result->num_rows > 0) {
+    die("Error: La tabla '$table_name' ya existe.");
+}
+
+// Crear la tabla con las columnas correspondientes
+$sql_create_table = "CREATE TABLE $table_name (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_cliente VARCHAR(255) NOT NULL,
+    apellido_cliente VARCHAR(255),
+    numero_telefono VARCHAR(20) NOT NULL,
+    asesor_ventas VARCHAR(255) NOT NULL,
+    nombre_base_datos VARCHAR(255) NOT NULL,
+    campana VARCHAR(255) NOT NULL,
+    fecha_ingreso DATE NOT NULL
+)";
+
+// Ejecutar la consulta para crear la tabla
+if (!$conn->query($sql_create_table)) {
+    die("Error al crear la tabla: " . $conn->error);
+}
+
 // Preparar la consulta SQL para insertar cada cliente
-$stmt = $conn->prepare("INSERT INTO Clientes (nombre_cliente, apellido_cliente, numero_telefono, asesor_ventas, nombre_base_datos, campana, fecha_ingreso) 
+$stmt = $conn->prepare("INSERT INTO $table_name (nombre_cliente, apellido_cliente, numero_telefono, asesor_ventas, nombre_base_datos, campana, fecha_ingreso) 
                         VALUES (?, ?, ?, ?, ?, ?, ?)");
 
 // Insertar los clientes uno por uno
@@ -55,7 +83,7 @@ foreach ($clientes as $cliente) {
     }
 }
 
-echo "Datos guardados exitosamente.";
+echo "Datos guardados exitosamente en la tabla '$table_name'.";
 
 // Cerrar la conexión
 $stmt->close();

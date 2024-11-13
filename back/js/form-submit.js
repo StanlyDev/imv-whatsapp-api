@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Cargar archivo Excel y mostrar los datos en la tabla
+    // Evento para manejar la carga del archivo
     document.getElementById('file-upload').addEventListener('change', function(e) {
         let file = e.target.files[0];
         let reader = new FileReader();
@@ -15,21 +15,20 @@ document.addEventListener('DOMContentLoaded', function() {
             // Procesamos los datos para que se vea bien
             let clientes = jsonData.slice(1).map(row => {
                 return {
-                    nombre_cliente: row[0],        // Nombre del Cliente
-                    apellido_cliente: row[1],      // Apellido del Cliente
-                    numero_telefono: row[2],      // Número de Teléfono
-                    asesor_ventas: row[3]         // Asesor de Ventas
+                    nombre_cliente: row[0],
+                    apellido_cliente: row[1],  // Ahora se incluye el apellido
+                    numero_telefono: row[2],
+                    asesor_ventas: row[3]
                 };
             });
 
             console.log(clientes);  // Muestra los datos de los clientes
 
             // Cargar los datos en la tabla HTML
-            let tbody = document.querySelector('#clientes-table tbody');
+            let tbody = document.querySelector('table tbody');
             tbody.innerHTML = '';  // Limpiar la tabla antes de agregar nuevas filas
-            clientes.forEach((cliente, index) => {
+            clientes.forEach(cliente => {
                 let row = `<tr>
-                            <td>${index + 1}</td>
                             <td>${cliente.nombre_cliente}</td>
                             <td>${cliente.apellido_cliente}</td>
                             <td>${cliente.numero_telefono}</td>
@@ -38,22 +37,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 tbody.innerHTML += row;  // Agregar una fila por cliente
             });
 
-            // Guardar los datos del formulario y los clientes
+            // Enviar los datos al backend
+            let formData = new FormData();
+            formData.append('nombre_base_datos', document.getElementById('dbName').value);
+            formData.append('campana', document.getElementById('campaign').value);
+            formData.append('fecha_ingreso', document.getElementById('date').value);
+            formData.append('clientes', JSON.stringify(clientes)); // Convertir el array de clientes a un JSON string
+
+            // Manejar el envío del formulario
             document.getElementById('client-form').addEventListener('submit', function(event) {
                 event.preventDefault(); // Prevenir que el formulario se envíe por defecto
 
-                let formData = new FormData();
-                formData.append('nombre_base_datos', document.getElementById('dbName').value);
-                formData.append('campana', document.getElementById('campaign').value);
-                formData.append('fecha_ingreso', document.getElementById('date').value);
-                formData.append('clientes', JSON.stringify(clientes)); // Convertir los clientes a JSON
-
-                // Enviar los datos al backend
+                // Enviar el FormData al servidor
                 fetch('/back/php/save_client_data.php', {
                     method: 'POST',
                     body: formData
                 }).then(response => response.text())
-                  .then(response => console.log(response))
+                  .then(response => {
+                      console.log(response);  // Mostrar respuesta del servidor
+                      
+                      // Limpiar el formulario después de guardar
+                      document.getElementById('client-form').reset();
+
+                      // Limpiar la tabla de clientes después de guardar
+                      tbody.innerHTML = `<tr><td colspan="4" class="border px-4 py-2 text-center">No hay datos disponibles</td></tr>`;
+                  })
                   .catch(error => console.error('Error:', error));
             });
         };
