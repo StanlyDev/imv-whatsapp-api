@@ -1,24 +1,24 @@
-// Agrega un evento para capturar la entrada del usuario en el campo de búsqueda
-document.getElementById('searchInput').addEventListener('input', function() {
-    var filter = this.value.toLowerCase();  // Obtén el valor del input
-    var rows = document.querySelectorAll('#tableBody .table-row');  // Selecciona todas las filas de la tabla
+    // Función para filtrar las filas de la tabla en tiempo real
+    document.getElementById('searchInput').addEventListener('input', function() {
+        var filter = this.value.toLowerCase();
+        var rows = document.querySelectorAll('#tableBody .table-row');
   
-    rows.forEach(function(row) {
-      var columns = row.querySelectorAll('td');  // Obtiene las columnas de la fila
-      var match = false;
+        rows.forEach(function(row) {
+          var columns = row.querySelectorAll('td');
+          var match = false;
   
-      // Recorre cada columna y verifica si contiene el texto de búsqueda
-      columns.forEach(function(column) {
-        if (column.textContent.toLowerCase().includes(filter)) {
-          match = true;
-        }
+          // Revisamos si alguna de las columnas contiene el texto de búsqueda
+          columns.forEach(function(column) {
+            if (column.textContent.toLowerCase().includes(filter)) {
+              match = true;
+            }
+          });
+  
+          // Mostrar u ocultar la fila dependiendo si coincide con la búsqueda
+          if (match) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
       });
-  
-      // Si hay una coincidencia, muestra la fila, si no la oculta
-      if (match) {
-        row.style.display = '';
-      } else {
-        row.style.display = 'none';
-      }
-    });
-  });
