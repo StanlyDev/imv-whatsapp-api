@@ -25,14 +25,14 @@ if ($conn->connect_error) {
 $data = json_decode(file_get_contents('php://input'), true);
 
 // Validar datos
-if (empty($data['dbName']) || empty($data['campaign']) || empty($data['date']) || empty($data['clientes'])) {
+if (empty($data['nombre_base_datos']) || empty($data['campana']) || empty($data['date']) || empty($data['clientes'])) {
     echo json_encode(['success' => false, 'message' => 'Datos incompletos']);
     exit;
 }
 
 // Variables adicionales
-$dbName = $data['dbName'];
-$campaign = $data['campaign'];
+$dbName = $data['nombre_base_datos'];
+$campaign = $data['campana'];
 $date = $data['date'];
 
 // Preparar la consulta de inserción
@@ -42,11 +42,11 @@ $stmt->bind_param("sssssss", $nombre_cliente, $apellido_cliente, $numero_telefon
 // Iterar sobre los clientes e insertar
 foreach ($data['clientes'] as $cliente) {
     // Dividir el nombre completo en nombre y apellido
-    $names = explode(' ', $cliente['fullName']);
-    $nombre_cliente = $names[0]; // Nombre
-    $apellido_cliente = isset($names[1]) ? $names[1] : ''; // Apellido
-    $numero_telefono = $cliente['phone']; // Teléfono
-    $asesor_ventas = $cliente['advisor']; // Asesor de ventas
+    $names = explode(' ', $cliente['fullName'], 2);
+    $nombre_cliente = $names[0];
+    $apellido_cliente = isset($names[1]) ? $names[1] : '';
+    $numero_telefono = $cliente['phone'];
+    $asesor_ventas = $cliente['advisor'];
 
     // Ejecutar la consulta para insertar el cliente
     if (!$stmt->execute()) {
