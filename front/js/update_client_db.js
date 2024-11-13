@@ -93,13 +93,15 @@ document.querySelector('.button-save').addEventListener('click', function() {
         body: JSON.stringify(payload),
     })
     .then(response => {
-        // Intentamos convertir la respuesta en JSON
-        return response.json().catch(() => {
-            // Si falla, devolvemos el texto para depuración
+        if (!response.ok) {
+            // Si el servidor responde con un error (pero no 200), lanzamos el texto del error.
             return response.text().then(text => {
-                throw new Error(`Respuesta no válida del servidor: ${text}`);
+                throw new Error(`Error del servidor: ${text}`);
             });
-        });
+        }
+        
+        // Intentamos convertir la respuesta a JSON
+        return response.json();
     })
     .then(data => {
         if (data.success) {
@@ -112,7 +114,6 @@ document.querySelector('.button-save').addEventListener('click', function() {
         console.error('Error:', error);
         alert(`Hubo un error: ${error.message}`);
     });
-});
 
 // Evento para limpiar la tabla y resetear el input
 document.querySelector('.button-delete').addEventListener('click', function() {
