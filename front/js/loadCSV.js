@@ -1,92 +1,48 @@
-// Función para leer el archivo CSV y cargar los datos en la tabla
-document.getElementById('file-upload').addEventListener('change', function(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+document.addEventListener("DOMContentLoaded", function() {
+    const fileUpload = document.getElementById('file-upload');
+    const tableBody = document.getElementById('clientes-table').getElementsByTagName('tbody')[0];
+    let clientesData = []; // Variable para almacenar los datos del CSV
 
-    const reader = new FileReader();
-    
-    reader.onload = function(e) {
-        const content = e.target.result;
-        processCSV(content);
-    };
-    
-    reader.readAsText(file);
-});
+    // Verifica si el elemento existe antes de agregar el event listener
+    if (fileUpload) {
+        fileUpload.addEventListener('change', function(e) {
+            let file = e.target.files[0];
+            let reader = new FileReader();
 
-// Función para procesar el contenido CSV
-function processCSV(content) {
-    // Limpiar cualquier dato previo en la tabla
-    const tbody = document.querySelector('table tbody');
-    tbody.innerHTML = '';
-    
-    // Separar el contenido por líneas
-    const lines = content.split('\n');
-    
-    // Intentamos detectar el delimitador en base a las primeras líneas del archivo
-    const delimiter = detectDelimiter(lines[0]);
-    
-    // Saltar la primera línea (encabezado) y procesar el resto
-    lines.slice(1).forEach((line) => {
-        if (line.trim() === '') return; // Ignorar líneas vacías
-        
-        // Dividir la línea usando el delimitador detectado
-        const data = line.split(delimiter);
-        
-        // Verificar que la línea tenga 4 columnas
-        if (data.length === 4) {
-            const row = document.createElement('tr');
-            
-            // Crear celdas para cada dato
-            data.forEach(item => {
-                const cell = document.createElement('td');
-                cell.textContent = item.trim();
-                row.appendChild(cell);
-            });
-            
-            // Insertar la fila en el cuerpo de la tabla
-            tbody.appendChild(row);
-        }
-    });
+            reader.onload = function(event) {
+                let data = new Uint8Array(event.target.result);
+                let workbook = XLSX.read(data, { type: 'array' });
 
-    // Si no hay datos, mostrar el mensaje de "No hay datos disponibles"
-    if (tbody.children.length === 0) {
-        const noDataRow = document.createElement('tr');
-        const noDataCell = document.createElement('td');
-        noDataCell.setAttribute('colspan', '4');
-        noDataCell.style.textAlign = 'center';
-        noDataCell.textContent = 'No hay datos disponibles';
-        noDataRow.appendChild(noDataCell);
-        tbody.appendChild(noDataRow);
-    }
-}
+                // Supón que la hoja que contiene los datos es la primera
+                let sheet = workbook.Sheets[workbook.SheetNames[0]];
+                let jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-// Función para detectar el delimitador más probable (coma o punto y coma)
-function detectDelimiter(line) {
-    const commaCount = (line.match(/,/g) || []).length;
-    const semicolonCount = (line.match(/;/g) || []).length;
-    
-    // Si hay más comas que puntos y comas, asumimos que es coma
-    if (commaCount > semicolonCount) {
-        return ',';
+                // Limpiar la tabla antes de agregar los nuevos datos
+                tableBody.innerHTML = '';
+
+                // Procesamos los datos para que se vea bien
+                clientesData = jsonData.slice(1).map((row, index) => {
+                    return {
+                        id: index + 1,  // Asigna un ID automático
+                        nombre_cliente: row[0],
+                        numero_telefono: row[1],
+                        asesor_ventas: row[2]
+                    };
+                });
+
+                // Mostrar los datos en la tabla
+                clientesData.forEach(cliente => {
+                    let row = tableBody.insertRow();
+                    row.insertCell(0).textContent = cliente.id;
+                    row.insertCell(1).textContent = cliente.nombre_cliente;
+                    row.insertCell(2).textContent = cliente.numero_telefono;
+                    row.insertCell(3).textContent = cliente.asesor_ventas;
+                });
+            };
+
+            reader.readAsArrayBuffer(file);
+        });
     } else {
-        return ';';
+        console.error('El elemento de carga de archivo no existe.');
     }
-}
-
-// Función para limpiar la tabla al hacer clic en el botón Eliminar
-document.querySelector('.button-delete').addEventListener('click', function() {
-    const tbody = document.querySelector('table tbody');
-    tbody.innerHTML = ''; // Limpiar todas las filas
-
-    // Mostrar el mensaje de "No hay datos disponibles"
-    const noDataRow = document.createElement('tr');
-    const noDataCell = document.createElement('td');
-    noDataCell.setAttribute('colspan', '4');
-    noDataCell.style.textAlign = 'center';
-    noDataCell.textContent = 'No hay datos disponibles';
-    noDataRow.appendChild(noDataCell);
-    tbody.appendChild(noDataRow);
-
-    // Limpiar el archivo cargado
-    document.getElementById('file-upload').value = ''; // Limpiar el campo de archivo
 });
