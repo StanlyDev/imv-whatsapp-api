@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WhatsApp Imvesa</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <script src="/front/js/menu.js"></script>
+  <script defer src="/front/js/menu.js"></script>
   <link rel="stylesheet" href="/front/css/dbclient.css">
 </head>
 <body class="flex h-screen">
@@ -66,7 +66,7 @@
           <h1 class="main-heading">Bases de Datos de Clientes</h1>
           <div class="flex">
             <div class="relative">
-              <input type="text" placeholder="Buscar base de datos..." />
+              <input type="text" id="searchInput" placeholder="Buscar base de datos..." class="border p-2" />
             </div>
             <a href="/front/pages/add_ddclient.php">
               <button class="button btn" style="background-color: #4CAF50; color: white;">
@@ -84,42 +84,8 @@
                 <th class="text-right">Acciones</th>
               </tr>
             </thead>
-            <tbody>
-              <?php
-              // Mostrar las tablas obtenidas desde la base de datos
-              if (empty($tablas)) {
-                  echo "<tr><td colspan='5'>No se encontraron bases de datos.</td></tr>";
-              } else {
-                  foreach ($tablas as $tabla) {
-                      // Verificar si la tabla tiene registros
-                      $conn = new mysqli($host, $user, $password, $dbname);
-                      $query = "SELECT COUNT(*) as count FROM `$tabla`";
-                      $countResult = $conn->query($query);
-                      if ($countResult) {
-                          $countRow = $countResult->fetch_assoc();
-                          $numRegistros = $countRow['count'];
-                      } else {
-                          $numRegistros = 0;
-                      }
-
-                      // Mostrar la tabla
-                      echo "<tr>
-                            <td>{$tabla}</td>
-                            <td>Desconocida</td> <!-- Aquí puedes poner la lógica para obtener la campaña -->
-                            <td>Desconocida</td> <!-- Aquí puedes poner la lógica para obtener la fecha de creación -->
-                            <td>{$numRegistros}</td>
-                            <td class='text-right'>
-                              <button class='icon'>👁️</button>
-                              <button class='icon'>✏️</button>
-                              <button class='icon'>🗑️</button>
-                            </td>
-                          </tr>";
-
-                      // Cerrar la conexión
-                      $conn->close();
-                  }
-              }
-              ?>
+            <tbody id="tableBody">
+              <?php include('/back/php/dbclient_view.php'); ?>
             </tbody>
           </table>
         </div>
@@ -128,5 +94,7 @@
   </div>
   <!-- Overlay for mobile -->
   <div id="overlay" class="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden hidden"></div>
+
+  <script defer src="/front/js/searchdb.js"></script>
 </body>
 </html>
