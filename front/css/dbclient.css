@@ -147,3 +147,8 @@ body {
     cursor: pointer;
     color: #ffffff;
   }
+
+  #popupContent {
+    max-height: 70vh;
+    overflow-y: scroll;
+  }

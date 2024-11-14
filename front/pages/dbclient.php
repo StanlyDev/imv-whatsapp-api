@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WhatsApp Imvesa</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script defer src="/front/js/popup.js"></script>
   <script defer src="/front/js/menu.js"></script>
   <script defer src="/front/js/searchdb.js"></script>
   <link rel="stylesheet" href="/front/css/dbclient.css">
@@ -160,6 +161,17 @@
         </div>
       </div>
     </main>
+    <div id="popup" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+      <div class="bg-white rounded-lg p-6 w-3/4 max-h-[80vh] overflow-y-auto">
+        <div class="flex justify-between items-center">
+          <h2 class="text-xl font-semibold">Detalles de Clientes</h2>
+          <button id="closePopup" class="text-gray-500 hover:text-gray-700">&times;</button>
+        </div>
+        <div id="popupContent" class="mt-4 overflow-x-auto">
+          <!-- Aquí se cargará la tabla con AJAX -->
+        </div>
+      </div>
+    </div>
   </div>
   <!-- Overlay for mobile -->
   <div id="overlay" class="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden hidden"></div>

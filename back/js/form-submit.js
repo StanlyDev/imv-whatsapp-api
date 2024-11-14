@@ -15,10 +15,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // Procesamos los datos para que se vea bien
             let clientes = jsonData.slice(1).map(row => {
                 return {
-                    nombre_cliente: row[0],
-                    apellido_cliente: row[1],  // Ahora se incluye el apellido
-                    numero_telefono: row[2],
-                    asesor_ventas: row[3]
+                    nombre_cliente: row[0] || '',  // Si el nombre está vacío, asignamos una cadena vacía
+                    apellido_cliente: row[1] || '',  // Lo mismo para el apellido
+                    numero_telefono: row[2] || '',  // Lo mismo para el teléfono
+                    asesor_ventas: row[3] || ''  // Lo mismo para el asesor
                 };
             });
 

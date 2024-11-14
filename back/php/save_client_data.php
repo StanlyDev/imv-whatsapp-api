@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 // Conexión a la base de datos
 $host = 'localhost';
 $user = 'bventura';
@@ -43,14 +46,14 @@ if ($result->num_rows > 0) {
 }
 
 // Crear la tabla con las columnas correspondientes
-$sql_create_table = "CREATE TABLE $table_name (
+$sql_create_table = "CREATE TABLE `{$table_name}` (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_cliente VARCHAR(255) NOT NULL,
-    apellido_cliente VARCHAR(255),
-    numero_telefono VARCHAR(20) NOT NULL,
-    asesor_ventas VARCHAR(255) NOT NULL,
-    nombre_base_datos VARCHAR(255) NOT NULL,
-    campana VARCHAR(255) NOT NULL,
+    nombre_cliente TEXT NOT NULL,
+    apellido_cliente TEXT NOT NULL,
+    numero_telefono TEXT NOT NULL,
+    asesor_ventas TEXT NOT NULL,
+    nombre_base_datos TEXT NOT NULL,
+    campana TEXT NOT NULL,
     fecha_ingreso DATE NOT NULL
 )";
 
@@ -65,13 +68,14 @@ $stmt = $conn->prepare("INSERT INTO $table_name (nombre_cliente, apellido_client
 
 // Insertar los clientes uno por uno
 foreach ($clientes as $cliente) {
-    // Validar que los datos del cliente no estén vacíos
-    if (empty($cliente['nombre_cliente']) || empty($cliente['apellido_cliente']) || empty($cliente['numero_telefono']) || empty($cliente['asesor_ventas'])) {
-        continue;  // Si algún campo importante está vacío, saltamos este cliente
+    // Validar que los datos del cliente no estén vacíos (solo para los campos obligatorios)
+    if (empty($cliente['nombre_cliente']) || empty($cliente['numero_telefono']) || empty($cliente['asesor_ventas'])) {
+        continue;  // Omite clientes con datos críticos vacíos
     }
 
+    // Si no hay errores, insertar el cliente
     $nombre_cliente = $cliente['nombre_cliente'];
-    $apellido_cliente = $cliente['apellido_cliente'];
+    $apellido_cliente = isset($cliente['apellido_cliente']) ? $cliente['apellido_cliente'] : '';  // Si no hay apellido, poner vacío
     $numero_telefono = $cliente['numero_telefono'];
     $asesor_ventas = $cliente['asesor_ventas'];
 

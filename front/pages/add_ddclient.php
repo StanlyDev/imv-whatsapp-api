@@ -85,7 +85,7 @@
             </div>
             <div class="form-group mt-4">
               <button type="submit" class="button button-save bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Guardar</button>
-              <button type="reset" class="button button-delete bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Eliminar</button>
+              <button id="eliminar-btn" type="reset" class="button button-delete bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Eliminar</button>
             </div>
           </form>
           
@@ -95,6 +95,7 @@
               <tr>
                 <th class="border px-4 py-2">ID</th>
                 <th class="border px-4 py-2">Nombre del Cliente</th>
+                <th class="border px-4 py-2">Apellido del Cliente</th>
                 <th class="border px-4 py-2">Número de Teléfono</th>
                 <th class="border px-4 py-2">Asesor de Ventas</th>
               </tr>
