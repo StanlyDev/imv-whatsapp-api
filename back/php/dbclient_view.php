@@ -56,7 +56,7 @@ if (empty($tablas)) {
                 <td>{$fecha_ingreso}</td>
                 <td>{$numRegistros}</td>
                 <td class='text-right'>
-                  <button class='icon'>👁️</button>
+                  <button class='view-button icon'>👁️</button>
                   <button class='icon'>✏️</button>
                   <button class='icon'>🗑️</button>
                 </td>
