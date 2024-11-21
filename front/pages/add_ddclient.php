@@ -33,9 +33,11 @@
             </button>
           </li>
           <li>
+          <a href="/front/pages/charts.php">
             <button class="flex w-full items-center justify-between rounded-lg p-2">
               <span>Métricas</span>
             </button>
+            </a>
           </li>
           <li>
             <a href="/front/pages/dbclient.php">
@@ -68,19 +70,19 @@
           <h1>Base de Datos de Clientes</h1>
           <form id="client-form" method="POST" enctype="multipart/form-data">
             <div class="form-group">
-              <label for="dbName">Nombre de Base de Datos</label>
-              <input type="text" id="dbName" name="nombre_base_datos" placeholder="Ingrese el nombre de la base de datos" required class="w-full p-2 border border-gray-300 rounded">
+              <label for="dbName">Nombre de Base de Datos:</label>
+              <input type="text" id="dbName" name="nombre_base_datos" placeholder="Clientes_Potenciales" required class="w-full p-2 border border-gray-300 rounded">
             </div>
             <div class="form-group">
-              <label for="campaign">Campaña</label>
+              <label for="campaign">Campaña:</label>
               <input type="text" id="campaign" name="campana" placeholder="Ingrese el nombre de la campaña" required class="w-full p-2 border border-gray-300 rounded">
             </div>
             <div class="form-group">
-              <label for="date">Fecha</label>
+              <label for="date">Fecha:</label>
               <input type="date" id="date" name="fecha_ingreso" required class="w-full p-2 border border-gray-300 rounded">
             </div>
             <div class="form-group">
-              <label for="file-upload">Cargar archivo Excel</label>
+              <label for="file-upload">Cargar archivo Excel:</label>
               <input type="file" id="file-upload" name="file-upload" accept=".xlsx, .xls" required class="w-full p-2 border border-gray-300 rounded">
             </div>
             <div class="form-group mt-4">

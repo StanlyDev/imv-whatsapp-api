@@ -30,9 +30,11 @@
             </button>
           </li>
           <li>
+            <a href="/front/pages/charts.php">
             <button class="flex w-full items-center justify-between rounded-lg p-2">
               <span>Métricas</span>
             </button>
+            </a>
           </li>
           <li>
             <a href="/front/pages/dbclient.php">

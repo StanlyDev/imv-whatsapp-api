@@ -54,6 +54,7 @@ button:hover {
   align-items: center;
   justify-content: center;
   visibility: hidden; /* Estará oculto inicialmente */
+  z-index: 99;
 }
 
 #popup .bg-gray-800 {
