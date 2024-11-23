@@ -7,7 +7,7 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script defer src="/front/js/menu.js"></script>
-  <script defer src="/front/js/defaultChart.js"></script>
+  <script defer src="/front/js/chartsData.js"></script>
   <link rel="stylesheet" href="/front/css/index.css">
 </head>
 <body class="flex h-screen">
@@ -102,12 +102,7 @@
                     <div class="flex-1">
                         <label for="database-name" class="block text-sm font-medium text-gray-700">Selecciona Base de Datos</label>
                         <select id="database-name" class="border rounded-lg px-3 py-2 w-full">
-                            <option value="">Todas</option>
-                            <option value="Clientes Potenciales">Clientes Potenciales</option>
-                            <option value="Clientes Actuales">Clientes Actuales</option>
-                            <option value="Leads Facebook">Leads Facebook</option>
-                            <option value="Campaña Verano">Campaña Verano</option>
-                            <option value="Fidelización">Fidelización</option>
+                            <option value="">Todas</option> <!-- Opción por defecto -->
                         </select>
                     </div>
                     <button id="apply-client-filter" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Aplicar Filtro</button>
