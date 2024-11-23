@@ -90,24 +90,23 @@
               <button id="eliminar-btn" type="reset" class="button button-delete bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Eliminar</button>
             </div>
           </form>
-          
-          <!-- Tabla de clientes -->
-          <table class="w-full mt-6 border-collapse" id="clientes-table">
-            <thead>
-              <tr>
-                <th class="border px-4 py-2">ID</th>
-                <th class="border px-4 py-2">Nombre del Cliente</th>
-                <th class="border px-4 py-2">Apellido del Cliente</th>
-                <th class="border px-4 py-2">Número de Teléfono</th>
-                <th class="border px-4 py-2">Asesor de Ventas</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td colspan="4" class="border px-4 py-2 text-center">No hay datos disponibles</td>
-              </tr>
-            </tbody>
-          </table>
+            <!-- Tabla de clientes -->
+            <table class="w-full mt-6 border-collapse" id="clientes-table">
+                <thead>
+                    <tr>
+                        <th class="border px-4 py-2">ID</th>
+                        <th class="border px-4 py-2">Nombre del Cliente</th>
+                        <th class="border px-4 py-2">Apellido del Cliente</th>
+                        <th class="border px-4 py-2">Número de Teléfono</th>
+                        <th class="border px-4 py-2">Asesor de Ventas</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="5" class="border px-4 py-2 text-center">No hay datos disponibles</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
       </div>
     </main>

@@ -13,8 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
             let jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
             // Procesamos los datos para que se vea bien
-            let clientes = jsonData.slice(1).map(row => {
+            let clientes = jsonData.slice(1).map((row, index) => {
                 return {
+                    id: index + 1,  // Asignamos un ID para la visualización
                     nombre_cliente: row[0] || '',  // Si el nombre está vacío, asignamos una cadena vacía
                     apellido_cliente: row[1] || '',  // Lo mismo para el apellido
                     numero_telefono: row[2] || '',  // Lo mismo para el teléfono
@@ -25,10 +26,11 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log(clientes);  // Muestra los datos de los clientes
 
             // Cargar los datos en la tabla HTML
-            let tbody = document.querySelector('table tbody');
+            let tbody = document.querySelector('#clientes-table tbody');
             tbody.innerHTML = '';  // Limpiar la tabla antes de agregar nuevas filas
             clientes.forEach(cliente => {
                 let row = `<tr>
+                            <td>${cliente.id}</td> <!-- Mostrar ID en la tabla -->
                             <td>${cliente.nombre_cliente}</td>
                             <td>${cliente.apellido_cliente}</td>
                             <td>${cliente.numero_telefono}</td>
@@ -37,32 +39,44 @@ document.addEventListener('DOMContentLoaded', function() {
                 tbody.innerHTML += row;  // Agregar una fila por cliente
             });
 
-            // Enviar los datos al backend
-            let formData = new FormData();
-            formData.append('nombre_base_datos', document.getElementById('dbName').value);
-            formData.append('campana', document.getElementById('campaign').value);
-            formData.append('fecha_ingreso', document.getElementById('date').value);
-            formData.append('clientes', JSON.stringify(clientes)); // Convertir el array de clientes a un JSON string
-
             // Manejar el envío del formulario
             document.getElementById('client-form').addEventListener('submit', function(event) {
                 event.preventDefault(); // Prevenir que el formulario se envíe por defecto
+
+                // Crear el objeto FormData con los datos del formulario
+                let formData = new FormData();
+                formData.append('nombre_base_datos', document.getElementById('dbName').value);
+                formData.append('campana', document.getElementById('campaign').value);
+                formData.append('fecha_ingreso', document.getElementById('date').value);
+                formData.append('clientes', JSON.stringify(clientes.map(cliente => {
+                    // Excluir el ID antes de enviarlo al servidor
+                    return {
+                        nombre_cliente: cliente.nombre_cliente,
+                        apellido_cliente: cliente.apellido_cliente,
+                        numero_telefono: cliente.numero_telefono,
+                        asesor_ventas: cliente.asesor_ventas
+                    };
+                }))); // Convertir el array de clientes a un JSON string, sin el ID
 
                 // Enviar el FormData al servidor
                 fetch('/back/php/save_client_data.php', {
                     method: 'POST',
                     body: formData
-                }).then(response => response.text())
-                  .then(response => {
-                      console.log(response);  // Mostrar respuesta del servidor
-                      
-                      // Limpiar el formulario después de guardar
-                      document.getElementById('client-form').reset();
-
-                      // Limpiar la tabla de clientes después de guardar
-                      tbody.innerHTML = `<tr><td colspan="4" class="border px-4 py-2 text-center">No hay datos disponibles</td></tr>`;
-                  })
-                  .catch(error => console.error('Error:', error));
+                })
+                .then(response => response.json()) // Convertir respuesta a JSON
+                .then(data => {
+                    if (data.success) {
+                        alert(data.success); // Mostrar mensaje de éxito
+                        document.getElementById('client-form').reset(); // Limpiar formulario
+                        tbody.innerHTML = `<tr><td colspan="5" class="border px-4 py-2 text-center">No hay datos disponibles</td></tr>`; // Limpiar la tabla
+                    } else {
+                        alert(`Error: ${data.error}`); // Mostrar mensaje de error si ocurre
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Ocurrió un error al guardar los datos.');
+                });
             });
         };
 

@@ -1,93 +1,97 @@
 <?php
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
+header('Content-Type: application/json'); // Devolver JSON
 
-// Conexión a la base de datos
 $host = 'localhost';
 $user = 'bventura';
 $password = 'Stanlyv_00363';
 $dbname = 'ClientesDB';
 
-// Crear la conexión
+// Conectar a la base de datos
 $conn = new mysqli($host, $user, $password, $dbname);
 
-// Verificar la conexión
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    echo json_encode(['error' => 'Error de conexión: ' . $conn->connect_error]);
+    exit();
 }
 
-// Obtener los datos del formulario
-$nombre_base_datos = $_POST['nombre_base_datos'];  // Nombre de la base de datos
-$campana = $_POST['campana'];  // Nombre de la campaña
-$fecha_ingreso = $_POST['fecha_ingreso'];  // Fecha de ingreso
+// Obtener y sanitizar los datos del formulario
+$nombre_base_datos = trim($_POST['nombre_base_datos'] ?? '');
+$campana = trim($_POST['campana'] ?? '');
+$fecha_ingreso = trim($_POST['fecha_ingreso'] ?? '');
+$clientes = json_decode($_POST['clientes'] ?? '[]', true);
 
-// Validar que los datos no estén vacíos
-if (empty($nombre_base_datos) || empty($campana) || empty($fecha_ingreso)) {
-    die("Error: Los campos obligatorios no pueden estar vacíos.");
+// Validación de campos obligatorios
+if (!$nombre_base_datos || !$campana || !$fecha_ingreso || empty($clientes) || !is_array($clientes)) {
+    echo json_encode(['error' => 'Datos incompletos o inválidos']);
+    exit();
 }
 
-// Obtener los datos de los clientes (JSON)
-$clientes = isset($_POST['clientes']) ? json_decode($_POST['clientes'], true) : [];  // Convertir JSON a array
+// Sanitización del nombre de la tabla
+$table_name = $conn->real_escape_string($nombre_base_datos);
 
-// Verificar si se recibieron datos de clientes
-if (empty($clientes)) {
-    die("No hay datos para guardar.");
-}
+// Crear tabla solo si no existe
+$sql_create_table = "
+    CREATE TABLE IF NOT EXISTS `{$table_name}` (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        nombre_cliente TEXT NOT NULL,
+        apellido_cliente TEXT NOT NULL,
+        numero_telefono TEXT NOT NULL,
+        asesor_ventas TEXT NOT NULL,
+        nombre_base_datos TEXT NOT NULL,
+        campana TEXT NOT NULL,
+        fecha_ingreso DATE NOT NULL
+    )";
 
-// Crear una nueva tabla con el nombre proporcionado
-$table_name = $conn->real_escape_string($nombre_base_datos);  // Evitar inyección SQL
-
-// Consultar para ver si la tabla ya existe
-$query = "SHOW TABLES LIKE '$table_name'";
-$result = $conn->query($query);
-
-if ($result->num_rows > 0) {
-    die("Error: La tabla '$table_name' ya existe.");
-}
-
-// Crear la tabla con las columnas correspondientes
-$sql_create_table = "CREATE TABLE `{$table_name}` (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre_cliente TEXT NOT NULL,
-    apellido_cliente TEXT NOT NULL,
-    numero_telefono TEXT NOT NULL,
-    asesor_ventas TEXT NOT NULL,
-    nombre_base_datos TEXT NOT NULL,
-    campana TEXT NOT NULL,
-    fecha_ingreso DATE NOT NULL
-)";
-
-// Ejecutar la consulta para crear la tabla
 if (!$conn->query($sql_create_table)) {
-    die("Error al crear la tabla: " . $conn->error);
+    echo json_encode(['error' => 'Error al crear la tabla: ' . $conn->error]);
+    exit();
 }
 
-// Preparar la consulta SQL para insertar cada cliente
-$stmt = $conn->prepare("INSERT INTO $table_name (nombre_cliente, apellido_cliente, numero_telefono, asesor_ventas, nombre_base_datos, campana, fecha_ingreso) 
+// Preparar la consulta de inserción
+$stmt = $conn->prepare("INSERT INTO `{$table_name}` (nombre_cliente, apellido_cliente, numero_telefono, asesor_ventas, nombre_base_datos, campana, fecha_ingreso) 
                         VALUES (?, ?, ?, ?, ?, ?, ?)");
 
-// Insertar los clientes uno por uno
-foreach ($clientes as $cliente) {
-    // Validar que los datos del cliente no estén vacíos (solo para los campos obligatorios)
-    if (empty($cliente['nombre_cliente']) || empty($cliente['numero_telefono']) || empty($cliente['asesor_ventas'])) {
-        continue;  // Omite clientes con datos críticos vacíos
+// Iniciar transacción
+$conn->begin_transaction();
+
+$omitted_clients = [];  // Array para almacenar los clientes omitidos
+
+try {
+    foreach ($clientes as $cliente) {
+        $nombre_cliente = $cliente['nombre_cliente'] ?? '';
+        $apellido_cliente = $cliente['apellido_cliente'] ?? '';
+        $numero_telefono = $cliente['numero_telefono'] ?? '';
+        $asesor_ventas = $cliente['asesor_ventas'] ?? '';
+
+        // Validar datos obligatorios por cliente
+        if (!$nombre_cliente || !$numero_telefono || !$asesor_ventas) {
+            $omitted_clients[] = $cliente;  // Agregar el cliente omitido
+            continue;  // Omitir registros incompletos
+        }
+
+        // Insertar cada cliente
+        $stmt->bind_param("sssssss", $nombre_cliente, $apellido_cliente, $numero_telefono, $asesor_ventas, $nombre_base_datos, $campana, $fecha_ingreso);
+        $stmt->execute();
     }
 
-    // Si no hay errores, insertar el cliente
-    $nombre_cliente = $cliente['nombre_cliente'];
-    $apellido_cliente = isset($cliente['apellido_cliente']) ? $cliente['apellido_cliente'] : '';  // Si no hay apellido, poner vacío
-    $numero_telefono = $cliente['numero_telefono'];
-    $asesor_ventas = $cliente['asesor_ventas'];
+    $conn->commit(); // Confirmar transacción
 
-    // Vincular parámetros y ejecutar la consulta
-    $stmt->bind_param("sssssss", $nombre_cliente, $apellido_cliente, $numero_telefono, $asesor_ventas, $nombre_base_datos, $campana, $fecha_ingreso);
-
-    if (!$stmt->execute()) {
-        echo "Error al guardar los datos del cliente: " . $stmt->error;
+    // Devolver respuesta
+    if (count($omitted_clients) > 0) {
+        echo json_encode([
+            'success' => 'Datos guardados parcialmente. Algunos registros fueron omitidos debido a campos incompletos.',
+            'omitted_clients' => $omitted_clients
+        ]);
+    } else {
+        echo json_encode(['success' => 'Datos guardados exitosamente en la tabla ' . $table_name]);
     }
+
+} catch (Exception $e) {
+    $conn->rollback(); // Revertir en caso de error
+    echo json_encode(['error' => 'Error al guardar los datos: ' . $e->getMessage()]);
 }
-
-echo "Datos guardados exitosamente en la tabla '$table_name'.";
 
 // Cerrar la conexión
 $stmt->close();

@@ -109,16 +109,15 @@
                 </div>
             </div>
             <!-- Filtro de Mes para Bases de Datos -->
-            <!-- Filtro de Comparación de Meses -->
             <div class="card mb-6 p-6 border rounded-lg shadow-sm">
-            <h2 class="text-xl font-bold">Comparar Bases de Datos por Mes</h2>
-            <p class="text-gray-600">Selecciona la cantidad de meses a comparar</p>
-            <div class="flex items-center gap-4">
-                <input type="number" id="months-count" min="1" max="12" value="1" class="border rounded-lg px-3 py-2 w-20">
-                <button id="generate-month-filters" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Generar Filtros</button>
-            </div>
-            <div id="month-filters" class="mt-4"></div>
-            <!-- Botón para comparar meses -->
+                <h2 class="text-xl font-bold">Comparar Bases de Datos por Mes</h2>
+                <p class="text-gray-600">Selecciona la cantidad de meses a comparar</p>
+                <div class="flex items-center gap-4">
+                    <input type="number" id="months-count" min="1" max="12" value="1" class="border rounded-lg px-3 py-2 w-20">
+                    <button id="generate-month-filters" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Generar Filtros</button>
+                </div>
+                <div id="month-filters" class="mt-4"></div>
+                <!-- Botón para comparar meses -->
                 <button id="compare-months" class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">Comparar Meses</button>
             </div>
             <!-- Gráficos -->
