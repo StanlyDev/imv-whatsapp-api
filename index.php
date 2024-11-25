@@ -135,16 +135,23 @@
             <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
               <div class="p-6 rounded-lg max-w-xs w-full" style="background-color: #312f30;">
                 <h2 class="text-lg font-semibold mb-4">Previsualización de WhatsApp</h2>
-                <div class="bg-gray-200 p-4 rounded-lg">
-                  <div class="bg-white rounded-lg p-3">
-                    <p id="headerPreview" class="font-medium mb-1"></p>
-                    <p id="bodyPreview" class="text-gray-700"></p>
-                    <p class="text-xs text-gray-500 text-right mt-1">12:00 PM</p>
+                <div class="p-4 rounded-lg">
+                  <div class="relative w-full">
+                    <svg width="300" height="600" viewBox="0 0 400 800" xmlns="http://www.w3.org/2000/svg">
+                      <rect x="10" y="10" width="280" height="580" rx="30" ry="30" stroke="black" stroke-width="4" fill="white"/>
+                      <rect x="130" y="20" width="40" height="10" rx="5" ry="5" fill="black"/>
+                      <foreignObject x="20" y="50" width="260" height="500">
+                        <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: sans-serif; text-align: justify; padding-top: 30px; background-color: #205441; border-radius: 1rem;">
+                          <p id="headerPreview" class="font-medium mb-1" style="padding: 1rem;"></p>
+                          <p id="bodyPreview" class="text-white-700" style="margin-left: 1rem;"></p>
+                          <p class="text-xs text-white-500 text-right mt-1">12:00 PM</p>
+                        </div>
+                      </foreignObject>
+                    </svg>
                   </div>
                 </div>
                 <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg" onclick="closePreview()">Cerrar</button>
               </div>
-            </div>
             </div>
           </div>
         </div>
