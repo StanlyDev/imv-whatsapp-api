@@ -3,51 +3,53 @@ let headerType = 'none';
 function setHeaderType(type) {
   headerType = type;
   const headerInput = document.getElementById('headerInput');
-  const headerImagePreview = document.getElementById('headerImagePreview');
   const imageInput = document.getElementById('imageInput');
-  
-  // Mostrar el input de archivo si se selecciona 'media', ocultar el campo de texto
-  if (type === 'media') {
-    headerInput.classList.add('hidden');
-    headerImagePreview.classList.remove('hidden');
-    imageInput.click();  // Abrir el selector de archivo
-  } else {
-    headerInput.classList.toggle('hidden', type !== 'text');
-    headerImagePreview.classList.add('hidden');
-  }
+  const headerImagePreview = document.getElementById('headerImagePreview');
+
+  // Muestra/oculta los inputs según la selección
+  headerInput.classList.toggle('hidden', type !== 'text');
+  imageInput.classList.toggle('hidden', type !== 'media');
+  headerImagePreview.classList.add('hidden'); // Oculta la imagen previa si se cambia la opción
 }
 
+// Previsualizar imagen seleccionada
 function previewImage(event) {
   const file = event.target.files[0];
-  const imagePreview = document.getElementById('headerImage');
-  
   if (file) {
     const reader = new FileReader();
     reader.onload = function(e) {
-      imagePreview.src = e.target.result; // Mostrar la imagen seleccionada
-    }
-    reader.readAsDataURL(file);
+      const headerImage = document.getElementById('headerImage');
+      const headerImagePreview = document.getElementById('headerImagePreview');
+      headerImage.src = e.target.result;
+      headerImagePreview.classList.remove('hidden');
+    };
+    reader.readAsDataURL(file); // Lee la imagen como una URL base64
   }
 }
 
+// Abre el modal de previsualización
 function openPreview() {
   const headerPreview = document.getElementById('headerPreview');
   const bodyPreview = document.getElementById('bodyPreview');
-  const headerText = document.querySelector('#headerInput input')?.value || '';
+  const headerText = document.querySelector('#headerInput input')?.value || 'Encabezado';
   const bodyText = document.getElementById('bodyText').value || 'Contenido del mensaje';
 
-  // Mostrar encabezado como texto o imagen
+  // Mostrar texto o imagen en el modal según el tipo de encabezado
   if (headerType === 'text') {
-    headerPreview.innerHTML = headerText;
+    headerPreview.textContent = headerText;
+    headerPreview.classList.remove('hidden');
   } else if (headerType === 'media') {
-    const image = document.getElementById('headerImage');
-    headerPreview.innerHTML = `<img src="${image.src}" alt="Imagen de encabezado" class="w-full rounded-lg mb-4">`;
+    const imageSrc = document.getElementById('headerImage').src;
+    headerPreview.innerHTML = imageSrc ? `<img src="${imageSrc}" class="w-full rounded-lg mb-2">` : '';
+  } else {
+    headerPreview.textContent = '';
   }
 
   bodyPreview.textContent = bodyText;
   document.getElementById('previewModal').classList.remove('hidden');
 }
 
+// Cierra el modal de previsualización
 function closePreview() {
   document.getElementById('previewModal').classList.add('hidden');
 }
