@@ -6,6 +6,7 @@
   <title>WhatsApp Imvesa</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script defer src="/front/js/menu.js"></script>
+  <script defer src="/front/js/previewMGS.js"></script>
   <link rel="stylesheet" href="/front/css/index.css">
 </head>
 <body class="flex h-screen">
@@ -79,60 +80,77 @@
               <p class="mb-8">
                 Las plantillas de mensajes no se pueden editar una vez que han sido enviadas para solicitar su aprobación.
               </p>
-              <!-- Form -->
               <div class="space-y-6">
+                <!-- Nombre -->
                 <div>
                   <label for="name" class="block text-sm font-medium">Nombre</label>
                   <input id="name" placeholder="Nombre de la Plantilla" class="mt-1 block w-full p-2 border border-gray-300 rounded-lg">
                 </div>
+                <!-- Mensaje -->
                 <div class="p-6 rounded-lg shadow-sm" style="background-color: #312f30;">
                   <h2 class="text-lg font-medium mb-4">Mensaje</h2>
-                  <!-- Header Section -->
+                  <!-- Encabezado -->
                   <div class="mb-6">
                     <label class="block text-sm font-medium">Encabezado</label>
                     <p class="text-sm text-gray-400 mb-2">
                       Agregue un título para el mensaje o elija qué tipo de medio usarás para este encabezado
                     </p>
                     <div class="flex gap-4 mb-4">
-                      <button class="dsb-head px-4 py-2 border border-gray-300 rounded-lg">Ninguno</button>
-                      <button class="px-4 py-2 border border-gray-300 rounded-lg">Texto</button>
-                      <label for="file-input" class="btn px-4 py-2 border border-gray-300 rounded-lg">
-                        Media
-                        <input id="file-input" type="file" class="hidden">
-                      </label>
+                      <button class="px-4 py-2 border border-gray-300 rounded-lg" onclick="setHeaderType('none')">Ninguno</button>
+                      <button class="px-4 py-2 border border-gray-300 rounded-lg" onclick="setHeaderType('text')">Texto</button>
+                      <button class="px-4 py-2 border border-gray-300 rounded-lg" onclick="setHeaderType('media')">Media</button>
+                      <!-- Input para seleccionar la imagen (oculto inicialmente) -->
                     </div>
-                    <div class="relative">
-                      <input placeholder="Buen dia estimado, {{nombre}}" maxlength="60" class="block w-full p-2 border border-gray-300 rounded-lg">
+                    <input type="file" id="imageInput" class="hidden" accept="image/*" onchange="previewImage(event)">
+                    <div class="relative hidden" id="headerImagePreview">
+                      <img id="headerImage" src="" alt="Imagen Previa" class="w-full rounded-lg">
+                    </div>
+                    <div class="relative hidden" id="headerInput">
+                      <input placeholder="Buen día estimado, {{nombre}}" maxlength="60" class="block w-full p-2 border border-gray-300 rounded-lg">
                       <span class="absolute right-2 top-2 text-sm text-gray-400">0/60</span>
                     </div>
                   </div>
-                  <!-- Body Section -->
+                  <!-- Cuerpo -->
                   <div>
                     <label class="block text-sm font-medium">Cuerpo</label>
                     <p class="text-sm text-gray-400 mb-2">
-                      Ingrese el texto de su mensaje en el idioma que seleccionó.
+                      Ingrese el texto de su mensaje.
                     </p>
                     <div class="relative">
-                      <textarea placeholder="Aqui tu contenido del mensaje a enviar." class="block w-full p-2 border border-gray-300 rounded-lg min-h-[100px]" maxlength="1024"></textarea>
+                      <textarea id="bodyText" placeholder="Aquí tu contenido del mensaje a enviar." class="block w-full p-2 border border-gray-300 rounded-lg min-h-[100px]" maxlength="1024"></textarea>
                       <span class="absolute right-2 bottom-2 text-sm text-gray-400">0/1024</span>
                     </div>
-                    <div class="flex items-center gap-2 mt-4 border-t pt-4">
+                    <div class="flex items-center gap-2 mt-4 border-t border-gray-700 pt-4">
                       <button class="p-2 border border-gray-300 rounded-lg"><b>B</b></button>
                       <button class="p-2 border border-gray-300 rounded-lg"><i>I</i></button>
                       <button class="p-2 border border-gray-300 rounded-lg"><s>S</s></button>
                       <div class="h-6 w-px bg-gray-200 mx-2"></div>
-                      <button class="px-4 py-2 border border-gray-300 rounded-lg">Previsualizar</button>
+                      <button class="px-4 py-2 border border-gray-300 rounded-lg" onclick="openPreview()">Previsualizar</button>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
+            <!-- Modal de Previsualización -->
+            <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+              <div class="bg-white p-6 rounded-lg max-w-xs w-full">
+                <h2 class="text-lg font-semibold mb-4">Previsualización de WhatsApp</h2>
+                <div class="bg-gray-200 p-4 rounded-lg">
+                  <div class="bg-white rounded-lg p-3">
+                    <p id="headerPreview" class="font-medium mb-1"></p>
+                    <p id="bodyPreview" class="text-gray-700"></p>
+                    <p class="text-xs text-gray-500 text-right mt-1">12:00 PM</p>
+                  </div>
+                </div>
+                <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg" onclick="closePreview()">Cerrar</button>
+              </div>
+            </div>
             </div>
           </div>
         </div>
       </div>
     </main>
   </div>
-
   <!-- Overlay for mobile -->
   <div id="overlay" class="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden hidden"></div>
 </body>

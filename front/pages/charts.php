@@ -69,18 +69,18 @@
         <!-- Template Form -->
         <h1 class="text-3xl font-bold mb-6">Portal de Métricas</h1>
             <!-- Filtro de Fechas -->
-            <div class="card mb-6 p-6 border rounded-lg shadow-sm">
+            <div class="card mb-6 p-6 rounded-lg shadow-sm" style="background-color: #312f30;">
                 <div class="mb-4">
                 <h2 class="text-xl font-bold">Filtro de Fechas</h2>
-                <p class="text-gray-600">Selecciona el rango de fechas para visualizar las métricas</p>
+                <p class="text-gray-400">Selecciona el rango de fechas para visualizar las métricas</p>
                 </div>
                 <div class="flex flex-wrap gap-4">
                 <div class="flex-1 min-w-[200px]">
-                    <label for="start-date" class="block text-sm font-medium text-gray-700">Fecha de inicio</label>
+                    <label for="start-date" class="block text-sm font-medium text-gray-400">Fecha de inicio</label>
                     <input type="date" id="start-date" class="border rounded-lg w-full px-3 py-2">
                 </div>
                 <div class="flex-1 min-w-[200px]">
-                    <label for="end-date" class="block text-sm font-medium text-gray-700">Fecha de fin</label>
+                    <label for="end-date" class="block text-sm font-medium text-gray-400">Fecha de fin</label>
                     <input type="date" id="end-date" class="border rounded-lg w-full px-3 py-2">
                 </div>
                 <div class="flex items-end">
@@ -91,16 +91,16 @@
                 </div>
             </div>
             <!-- Filtro de Clientes por Base de Datos -->
-            <div class="card mb-6 p-6 border rounded-lg shadow-sm">
+            <div class="card mb-6 p-6 rounded-lg shadow-sm" style="background-color: #312f30;">
                 <h2 class="text-xl font-bold">Filtrar Clientes por Base de Datos</h2>
-                <p class="text-gray-600">Filtra por cantidad mínima de clientes y nombre de base de datos</p>
+                <p class="text-gray-400">Filtra por cantidad mínima de clientes y nombre de base de datos</p>
                 <div class="flex items-center gap-4">
                     <div class="flex-1">
-                        <label for="min-clients" class="block text-sm font-medium text-gray-700">Cantidad mínima de clientes</label>
+                        <label for="min-clients" class="block text-sm font-medium text-gray-400">Cantidad mínima de clientes</label>
                         <input type="number" id="min-clients" class="border rounded-lg px-3 py-2 w-32" min="0" value="0">
                     </div>
                     <div class="flex-1">
-                        <label for="database-name" class="block text-sm font-medium text-gray-700">Selecciona Base de Datos</label>
+                        <label for="database-name" class="block text-sm font-medium text-gray-400">Selecciona Base de Datos</label>
                         <select id="database-name" class="border rounded-lg px-3 py-2 w-full">
                             <option value="">Todas</option> <!-- Opción por defecto -->
                         </select>
@@ -109,9 +109,9 @@
                 </div>
             </div>
             <!-- Filtro de Mes para Bases de Datos -->
-            <div class="card mb-6 p-6 border rounded-lg shadow-sm">
+            <div class="card mb-6 p-6 rounded-lg shadow-sm" style="background-color: #312f30;">
                 <h2 class="text-xl font-bold">Comparar Bases de Datos por Mes</h2>
-                <p class="text-gray-600">Selecciona la cantidad de meses a comparar</p>
+                <p class="text-gray-400">Selecciona la cantidad de meses a comparar</p>
                 <div class="flex items-center gap-4">
                     <input type="number" id="months-count" min="1" max="12" value="1" class="border rounded-lg px-3 py-2 w-20">
                     <button id="generate-month-filters" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">Generar Filtros</button>
@@ -123,17 +123,17 @@
             <!-- Gráficos -->
             <div class="grid gap-6 md:grid-cols-2">
                 <!-- Gráfico de Mensajes -->
-                <div class="card p-6 border rounded-lg shadow-sm">
+                <div class="card p-6 rounded-lg shadow-sm" style="background-color: #312f30;">
                 <h2 class="text-xl font-bold">Mensajes Enviados por Día</h2>
                 <canvas id="messagesChart" class="h-[300px]"></canvas>
                 </div>
                 <!-- Gráfico de Clientes -->
-                <div class="card p-6 border rounded-lg shadow-sm">
+                <div class="card p-6 rounded-lg shadow-sm" style="background-color: #312f30;">
                 <h2 class="text-xl font-bold">Clientes por Base de Datos</h2>
                 <canvas id="clientsChart" class="h-[300px]"></canvas>
                 </div>
                 <!-- Gráfico de Bases de Datos -->
-                <div class="card p-6 border rounded-lg shadow-sm md:col-span-2">
+                <div class="card p-6  rounded-lg shadow-sm md:col-span-2" style="background-color: #312f30;">
                 <h2 class="text-xl font-bold">Evolución de Bases de Datos</h2>
                 <canvas id="databasesChart" class="h-[300px]"></canvas>
                 </div>
