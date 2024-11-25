@@ -133,7 +133,7 @@
             </div>
             <!-- Modal de Previsualización -->
             <div id="previewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-              <div class="bg-white p-6 rounded-lg max-w-xs w-full">
+              <div class="p-6 rounded-lg max-w-xs w-full" style="background-color: #312f30;">
                 <h2 class="text-lg font-semibold mb-4">Previsualización de WhatsApp</h2>
                 <div class="bg-gray-200 p-4 rounded-lg">
                   <div class="bg-white rounded-lg p-3">
