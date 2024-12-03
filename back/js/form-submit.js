@@ -63,14 +63,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     method: 'POST',
                     body: formData
                 })
-                .then(response => response.json()) // Convertir respuesta a JSON
+                .then(response => response.text())  // Cambia a `response.text()` para ver qué llega realmente
                 .then(data => {
-                    if (data.success) {
-                        alert(data.success); // Mostrar mensaje de éxito
-                        document.getElementById('client-form').reset(); // Limpiar formulario
-                        tbody.innerHTML = `<tr><td colspan="5" class="border px-4 py-2 text-center">No hay datos disponibles</td></tr>`; // Limpiar la tabla
-                    } else {
-                        alert(`Error: ${data.error}`); // Mostrar mensaje de error si ocurre
+                    console.log("Respuesta recibida:", data); // Muestra la respuesta cruda del servidor
+                
+                    try {
+                        const jsonResponse = JSON.parse(data); // Intentamos parsear la respuesta como JSON
+                        if (jsonResponse.success) {
+                            alert(jsonResponse.success); // Muestra mensaje de éxito
+                            document.getElementById('client-form').reset(); // Limpiar formulario
+                            tbody.innerHTML = `<tr><td colspan="5" class="border px-4 py-2 text-center">No hay datos disponibles</td></tr>`; // Limpiar la tabla
+                        } else {
+                            alert(`Error: ${jsonResponse.error}`); // Mostrar mensaje de error si ocurre
+                        }
+                    } catch (error) {
+                        console.error("Error al parsear JSON:", error); // Error si la respuesta no es JSON
+                        alert("Ocurrió un error al procesar la respuesta del servidor.");
                     }
                 })
                 .catch(error => {
