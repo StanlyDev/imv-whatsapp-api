@@ -17,7 +17,7 @@
   <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 shadow-lg transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0">
     <div class="flex h-full flex-col">
       <div class="flex h-20 items-center justify-center border-b px-8">
-        <span class="text-2xl font-semibold"><img src="/front/pics/logo/Imvesa.png" alt=""></span>
+        <span class="text-2xl font-semibold"><img src="/front/pics/logo/Imvesa_white.png" alt=""></span>
       </div>
       <nav class="flex-1 overflow-y-auto p-4">
         <ul class="space-y-2">

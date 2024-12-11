@@ -3,86 +3,39 @@
     src: url('/front/font/Mazda-Type-Regular.woff') format('woff');
     font-weight: normal;
     font-style: normal;
-}
+    }
 
-@font-face {
-    font-family: 'MiFuente';
-    src: url('/front/font/Mazda-Type-Bold.woff') format('woff');
-    font-weight: bold;
-    font-style: normal;
-}
+    @font-face {
+        font-family: 'MiFuente';
+        src: url('/front/font/Mazda-Type-Bold.woff') format('woff');
+        font-weight: bold;
+        font-style: normal;
+    }
 
-@font-face {
-    font-family: 'MiFuente';
-    src: url('/front/font/Mazda-Type-Italic.woff') format('woff');
-    font-weight: normal;
-    font-style: italic;
-}
-
-html{
-    color: #d1d5db !important;
-}
-
-h1 {
-    font-weight: bold;
-}
-
-em {
-    font-style: italic;
-}
-
-p {
-    font-weight: normal;
-}
-
-body {
-    background-color: #231f20;
-    font-family: 'MiFuente', sans-serif;
-  }
-
-  aside {
-    background-color: #312f30;
-  }
-
-  header {
-    background-color: #312f30;
-  }
-
-  ul li button {
-    color: #d1d5db;
-  }
-
-  ul li button:hover {
-    background-color: #3f3b3c;
-    color: #ffffff;
-  }
-
-  .main-heading {
-    color: #ffffff;
-  }
-
-  .main-content p {
-    color: #a1a1a1;
-  }
-
-  button:hover {
-    background-color: #3f3b3c;
-    color: #ffffff;
-  }
-
-  .btn:hover {
-    background-color: #3f3b3c;
-    color: #ffffff;
-    cursor: pointer;
-  }
-
-  #headerImage {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-  
-  #headerImagePreview img {
-    max-width: 100%;
-    border-radius: 8px;
-  }
+    @font-face {
+        font-family: 'MiFuente';
+        src: url('/front/font/Mazda-Type-Italic.woff') format('woff');
+        font-weight: normal;
+        font-style: italic;
+    }
+    body {
+      background-color: #231f20;
+      font-family: 'MiFuente', sans-serif;
+    }
+    .form-container {
+      background-color: #3f3b3c;
+    }
+    .input-field {
+      background-color: #231f20;
+      border-color: #3f3b3c;
+    }
+    .input-field:focus {
+      border-color: #3f3b3c;
+    }
+    .button {
+      background-color: #2563eb;
+      color: white;
+    }
+    .button:hover {
+      background-color: #231f20;
+    }
